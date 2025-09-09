@@ -1,0 +1,11 @@
+{
+  "TUR": {
+    "CPI_inflation_annual_percent": "FP.CPI.TOTL.ZG",
+    "GDP_growth_annual_percent": "NY.GDP.MKTP.KD.ZG",
+    "Unemployment_total_percent": "SL.UEM.TOTL.ZS",
+    "Current_account_balance_USD": "BN.CAB.XOKA.CD",
+    "Current_account_balance_percent_GDP": "BN.CAB.XOKA.GD.ZS",
+    "GDP_current_USD": "NY.GDP.MKTP.CD",
+    "GDP_per_capita_current_USD": "NY.GDP.PCAP.CD"
+  }
+}
