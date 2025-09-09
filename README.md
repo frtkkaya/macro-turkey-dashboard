@@ -34,3 +34,10 @@ The goal is a clean, reproducible workflow for small economics/finance projects.
 ## Notes
 - Data is fetched on the fly from the World Bank API (no keys needed).
 - For policy rate and higher-frequency series, you can later add TCMB EVDS or FRED.
+
+## Optional Observations
+-GDP growth in Turkey is highly cyclical, with clear slowdowns in 2001, 2009, 2018–19 and 2020.
+
+-Unemployment generally rises around/after growth slowdowns (lagging effect), consistent with labor-market dynamics.
+
+-Current account balances remain mostly negative (deficits), highlighting persistent external financing needs.
