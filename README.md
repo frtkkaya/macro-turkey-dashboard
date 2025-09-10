@@ -30,6 +30,11 @@ The goal is a clean, reproducible workflow for small economics/finance projects.
    pip install -r requirements-extra.txt
    streamlit run app.py
    ```
+## Local
+```bash
+python -m venv .venv && . .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+streamlit run app.py
 
 ## Notes
 - Data is fetched on the fly from the World Bank API (no keys needed).
