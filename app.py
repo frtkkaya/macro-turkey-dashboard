@@ -1,34 +1,41 @@
-import json
-import pandas as pd
+# app.py
 import streamlit as st
-import matplotlib.pyplot as plt
-from src.data.worldbank import fetch_indicator
+import pandas as pd
+import plotly.express as px
+from src.data.worldbank import fetch_many, wide_pivot, WorldBankError
 
 st.set_page_config(page_title="Macro Turkey Dashboard", layout="wide")
+
 st.title("Macro Turkey Dashboard")
+st.caption("World Bank API ile temel göstergeler • Country=TUR")
 
-with open('src/data/indicators.json', 'r', encoding='utf-8') as f:
-    IND = json.load(f)["TUR"]
+with st.sidebar:
+    st.header("Ayarlar")
+    indicators_default = [
+        "FP.CPI.TOTL.ZG",     # CPI inflation, % (yıllık)
+        "NY.GDP.MKTP.KD.ZG",  # Real GDP growth, %
+        "SL.UEM.TOTL.ZS",     # Unemployment, %
+        "NE.EXP.GNFS.ZS",     # Exports of goods/services, % of GDP
+    ]
+    indicators = st.tags_input(
+        "World Bank Indicator Codes", value=indicators_default
+    ) if hasattr(st, "tags_input") else indicators_default
+    min_year, max_year = st.slider("Year range", 1980, 2025, (2000, 2025))
 
-choices = {
-    "CPI inflation (annual %)": IND["CPI_inflation_annual_percent"],
-    "GDP growth (annual %)": IND["GDP_growth_annual_percent"],
-    "Unemployment (%)": IND["Unemployment_total_percent"],
-    "Current account (% of GDP)": IND["Current_account_balance_percent_GDP"],
-    "Current account (USD bn)": IND["Current_account_balance_USD"]
-}
+try:
+    df_long = fetch_many("TUR", indicators)
+    df_wide = wide_pivot(df_long)
+    df_wide = df_wide.loc[(df_wide.index >= min_year) & (df_wide.index <= max_year)]
 
-opt = st.selectbox("Indicator", list(choices.keys()))
-code = choices[opt]
+    st.subheader("Tablo (geniş format)")
+    st.dataframe(df_wide.round(3))
 
-df = fetch_indicator('TUR', code).copy()
-if "USD bn" in opt:
-    df["value"] = df["value"] / 1e9
+    st.subheader("Grafikler")
+    for col in df_wide.columns:
+        fig = px.line(df_wide.reset_index(), x="date", y=col, markers=True, title=col)
+        st.plotly_chart(fig, use_container_width=True)
 
-st.write(f"World Bank indicator code: `{code}`")
-fig, ax = plt.subplots()
-ax.plot(df["date"], df["value"])
-ax.set_title(opt)
-ax.set_xlabel("Year")
-ax.grid(True)
-st.pyplot(fig)
+except WorldBankError as e:
+    st.error(f"World Bank hatası: {e}")
+except Exception as e:
+    st.exception(e)
